@@ -40,12 +40,8 @@ public class PeopleController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) { //запомнить синтаксис
-        List<Book> books = booksService.getBooksByOwner(peopleService.getPersonById(id));
-        for (Book book : books) {
-            book.setOverdue(booksService.isOverdue(book));
-        }
         model.addAttribute("person", peopleService.getPersonById(id));
-        model.addAttribute("books", books);
+        model.addAttribute("books", booksService.getBooksByOwner(peopleService.getPersonById(id)));
         return "people/show";
     }
 

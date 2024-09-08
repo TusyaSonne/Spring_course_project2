@@ -22,21 +22,22 @@ public class BooksService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public List<Book> getAllBooks(boolean sortByYear) {
+        if (sortByYear) {
+            return bookRepository.findAll(Sort.by("year"));
+        } else {
+            return bookRepository.findAll();
+        }
+
     }
 
-    public List<Book> getAllBooks(int page, int booksPerPage ) {
+    public List<Book> getAllBooks(int page, int booksPerPage, boolean sortByYear ) {
+        if (sortByYear) {
+            return bookRepository.findAll(PageRequest.of(page, booksPerPage, Sort.by("year"))).getContent();
+        }
         return bookRepository.findAll(PageRequest.of(page,booksPerPage)).getContent();
     }
 
-    public List<Book> getAllBooks(boolean sortByYear) {
-        return bookRepository.findAll(Sort.by("year"));
-    }
-
-    public List<Book> getAllBooksAndSort(boolean sortByYear, int page, int booksPerPage) {
-        return bookRepository.findAll(PageRequest.of(page, booksPerPage, Sort.by("year"))).getContent();
-    }
 
     public Book getBookById(int id) {
         Optional<Book> foundedBook = bookRepository.findById(id);
@@ -50,7 +51,9 @@ public class BooksService {
 
     @Transactional
     public void updateBook(int id, Book updatedBook) {
+        Person owner = bookRepository.findById(id).get().getOwner();
         updatedBook.setId(id);
+        updatedBook.setOwner(owner);
         bookRepository.save(updatedBook);
     }
 
@@ -82,7 +85,7 @@ public class BooksService {
     public List<Book> getBooksByOwner(Person person) {
         List<Book> foundedBooks = bookRepository.findByOwner(person);
         for (Book book : foundedBooks) {
-            if (book.isOverdue()) {
+            if (isOverdue(book)) {
                 book.setOverdue(true);
             } else {
                 book.setOverdue(false);
