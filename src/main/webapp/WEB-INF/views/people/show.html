@@ -14,7 +14,8 @@
     <p>Читатель пока не взял ни одной книги</p>
 </div>
 <div th:if="${!books.isEmpty()}" th:each="book : ${books}">
-    <a th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}">Книга</a>
+    <a th:if="${book.isOverdue()}" th:style="'color:red'" th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}">Книга</a> <!--не знаю будетли работать -->
+    <a th:if="${!book.isOverdue()}" th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}">Книга</a>
 </div>
 <hr />
 
