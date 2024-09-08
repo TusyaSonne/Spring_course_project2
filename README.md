@@ -1,2 +1,2 @@
-# Spring_course
-My practice for Spring Framework 
+# Spring project 2
+My practice for Spring Framework
